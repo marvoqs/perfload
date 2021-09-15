@@ -10,6 +10,26 @@ let socket = io("http://127.0.0.1:8181");
 
 socket.on("connect", () => {
   console.log("I am connected to the socket server... hooray!");
+
+  // We need a way to identify this machine to whomever concerned
+  const nI = os.networkInterfaces();
+  const macA = Array.from(nI)
+    .flat()
+    .find((interface) => interface.internal === false)?.mac;
+
+  // Client auth with single key value
+  socket.emit("clientAuth", "fdsakf8734hf4hf8q3fba8yb4f8ybbf");
+
+  // Start sending over data on interval
+  let perfDataInterval = setInterval(() => {
+    performanceData().then((allPerformanceData) => {
+      socket.emit("perfData", allPerformanceData);
+    });
+  }, 1000);
+
+  socket.on("disconnect", () => {
+    clearInterval(perfDataInterval);
+  });
 });
 
 function performanceData() {
@@ -89,7 +109,3 @@ function getCpuLoad() {
     }, 100);
   });
 }
-
-performanceData().then((allPerformanceData) => {
-  console.log({ allPerformanceData });
-});
