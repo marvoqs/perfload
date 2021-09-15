@@ -13,12 +13,27 @@ socket.on("connect", () => {
 
   // We need a way to identify this machine to whomever concerned
   const nI = os.networkInterfaces();
-  const macA = Array.from(nI)
-    .flat()
-    .find((interface) => interface.internal === false)?.mac;
+  console.log(nI);
+  let macA;
+  // loop through all the nI for this machine and find a non-internal one
+  for (let key in nI) {
+    if (!nI[key][0].internal) {
+      if (nI[key][0].mac === "00:00:00:00:00:00") {
+        macA = Math.random().toString(36).substr(2, 15);
+      } else {
+        macA = nI[key][0].mac;
+      }
+      break;
+    }
+  }
 
   // Client auth with single key value
   socket.emit("clientAuth", "fdsakf8734hf4hf8q3fba8yb4f8ybbf");
+
+  performanceData().then((allPerformanceData) => {
+    allPerformanceData.macA = macA;
+    socket.emit("initPerfData", allPerformanceData);
+  });
 
   // Start sending over data on interval
   let perfDataInterval = setInterval(() => {
@@ -44,7 +59,7 @@ function performanceData() {
     // OS type
     const osType = os.type() == "Darwin" ? "Mac" : os.type();
     // Uptime
-    const uptime = os.uptime();
+    const upTime = os.uptime();
     // CPU info
     const cpuModel = cpus[0].model;
     const numCores = cpus.length;
@@ -58,7 +73,7 @@ function performanceData() {
       usedMem,
       memUsage,
       osType,
-      uptime,
+      upTime,
       cpuModel,
       numCores,
       cpuSpeed,
