@@ -24,13 +24,33 @@ function socketMain(io, socket) {
 
   // A machine has connected, check to see if it's new
   // if it is, add it!
-  socket.on("initPerfData", (data) => {
+  socket.on("initPerfData", async (data) => {
     macA = data.macA;
-    // Now go check mongo
+    const mongooseResponse = await checkAndAdd(data);
+    console.log({ mongooseResponse });
   });
 
   socket.on("perfData", (data) => {
     // console.log({ data });
+  });
+}
+function checkAndAdd(data) {
+  // Because we are doing db stuff, JS won't wait for the db
+  // so we need to make this a promise
+  return new Promise((resolve, reject) => {
+    Machine.findOne({ macA: data.macA }, (err, doc) => {
+      if (err) {
+        reject(err);
+      } else if (doc === null) {
+        // These are the droids we're looking for!
+        // The record is not in the dv, so add it!
+        let newMachine = new Machine(data);
+        newMachine.save();
+        resolve("added");
+      } else {
+        resolve("found");
+      }
+    });
   });
 }
 

@@ -13,7 +13,6 @@ socket.on("connect", () => {
 
   // We need a way to identify this machine to whomever concerned
   const nI = os.networkInterfaces();
-  console.log(nI);
   let macA;
   // loop through all the nI for this machine and find a non-internal one
   for (let key in nI) {
