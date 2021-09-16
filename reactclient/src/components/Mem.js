@@ -1,11 +1,12 @@
+import { useRef } from "react";
 import drawCircle from "../utilities/drawCircle";
 
-const Mem = ({ data: { freeMem, totalMem, usedMem, memUsage } }) => {
-  const canvas = document.getElementById("memCanvas");
+const Mem = ({ data: { freeMem, totalMem, memUsage } }) => {
+  const canvasRef = useRef();
   const memUsageInPercents = memUsage * 100;
   const totalMemInGb = totalMem / (1024 * 1024 * 1024);
   const freeMemInGb = Math.round(freeMem / (1024 * 1024 * 1024));
-  drawCircle(canvas, memUsageInPercents);
+  drawCircle(canvasRef.current, memUsageInPercents);
 
   return (
     <div className="col-sm-3 cpu">
@@ -14,7 +15,7 @@ const Mem = ({ data: { freeMem, totalMem, usedMem, memUsage } }) => {
         <canvas
           className="canvas"
           height="200"
-          id="memCanvas"
+          ref={canvasRef}
           width="200"
         ></canvas>
         <div className="cpu-text">{memUsageInPercents}%</div>

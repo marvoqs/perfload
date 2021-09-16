@@ -16,6 +16,7 @@ const Widget = ({
     numCores,
     cpuSpeed,
     cpuLoad,
+    isActive,
   },
 }) => {
   const cpuData = { cpuLoad };
@@ -23,11 +24,12 @@ const Widget = ({
   const infoData = { osType, upTime, cpuModel, numCores, cpuSpeed };
 
   return (
-    <>
+    <div className="widget col-sm-12">
+      {!isActive && <div className="not-active">Offline</div>}
       <Cpu data={cpuData} />
       <Mem data={memData} />
       <Info data={infoData} />
-    </>
+    </div>
   );
 };
 

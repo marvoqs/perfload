@@ -12,15 +12,48 @@ function socketMain(io, socket) {
     switch (key) {
       case KEY_CLIENT_NODE:
         socket.join("clients");
+        console.log(
+          `[socket ${socket.id}]`,
+          "\x1b[31m",
+          "A node client has joined.",
+          "\x1b[0m"
+        );
         break;
       case KEY_CLIENT_UI:
         socket.join("ui");
-        console.log("A react client has joined.");
+        console.log(
+          `[socket ${socket.id}]`,
+          "\x1b[34m",
+          "A react client has joined.",
+          "\x1b[0m"
+        );
+        Machine.find({}, (err, docs) => {
+          docs.forEach((machine) => {
+            // On load, assume that all machines are offline
+            machine.isActive = false;
+            io.to("ui").emit("data", machine);
+          });
+        });
         break;
       default:
         socket.disconnect(true);
-        console.log("Client was disconnected due to invalid key.");
+        console.log(
+          `[socket ${socket.id}]`,
+          "\x1b[37m",
+          "Client was disconnected due to invalid key.",
+          "\x1b[0m"
+        );
     }
+  });
+
+  socket.on("disconnect", () => {
+    Machine.find({ macA }, (err, docs) => {
+      if (docs.length > 0) {
+        // Send one last emit to React
+        docs[0].isActive = false;
+        io.to("ui").emit("data", docs[0]);
+      }
+    });
   });
 
   // A machine has connected, check to see if it's new
@@ -28,11 +61,15 @@ function socketMain(io, socket) {
   socket.on("initPerfData", async (data) => {
     macA = data.macA;
     const mongooseResponse = await checkAndAdd(data);
-    console.log({ mongooseResponse });
+    console.log(
+      `[socket ${socket.id}]`,
+      "\x1b[35m",
+      `Machine "${data.macA}" has been ${mongooseResponse.toUpperCase()}.`,
+      "\x1b[0m"
+    );
   });
 
   socket.on("perfData", (data) => {
-    console.log("Tick...");
     io.to("ui").emit("data", data);
   });
 }

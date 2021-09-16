@@ -1,8 +1,9 @@
+import { useRef } from "react";
 import drawCircle from "../utilities/drawCircle";
 
 const Cpu = ({ data: { cpuLoad } }) => {
-  const canvas = document.getElementById("cpuCanvas");
-  drawCircle(canvas, cpuLoad);
+  const canvasRef = useRef();
+  drawCircle(canvasRef.current, cpuLoad);
 
   return (
     <div className="col-sm-3 cpu">
@@ -11,7 +12,7 @@ const Cpu = ({ data: { cpuLoad } }) => {
         <canvas
           className="canvas"
           height="200"
-          id="cpuCanvas"
+          ref={canvasRef}
           width="200"
         ></canvas>
         <div className="cpu-text">{cpuLoad}%</div>

@@ -16,6 +16,12 @@ socket.on("connect", () => {
   let macA;
   // loop through all the nI for this machine and find a non-internal one
   for (let key in nI) {
+    {
+      // FOR TESTING PURPOSES!!!
+      macA = Math.floor(Math.random() * 3) + 1;
+      break;
+    }
+
     if (!nI[key][0].internal) {
       if (nI[key][0].mac === "00:00:00:00:00:00") {
         macA = Math.random().toString(36).substr(2, 15);
@@ -67,6 +73,8 @@ function performanceData() {
 
     const cpuLoad = await getCpuLoad();
 
+    const isActive = true;
+
     resolve({
       freeMem,
       totalMem,
@@ -78,6 +86,7 @@ function performanceData() {
       numCores,
       cpuSpeed,
       cpuLoad,
+      isActive,
     });
   });
 }
