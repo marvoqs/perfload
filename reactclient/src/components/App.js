@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import socket from "../utilities/socketConnection";
+import socket from "../utilities/socket";
 
 import Widget from "./Widget";
 
@@ -8,15 +8,15 @@ function App() {
 
   useEffect(() => {
     socket.on("data", (data) => {
-      setPerformanceData(data);
+      setPerformanceData((prevState) => ({ ...prevState, [data.macA]: data }));
     });
   }, []);
 
-  console.log({ performanceData });
-
   return (
     <>
-      <Widget />
+      {Object.entries(performanceData).map(([key, value]) => (
+        <Widget key={key} data={value} />
+      ))}
     </>
   );
 }
