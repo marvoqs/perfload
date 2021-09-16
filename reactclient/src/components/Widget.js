@@ -24,7 +24,6 @@ const Widget = ({
 
   return (
     <>
-      <h1>Widget</h1>
       <Cpu data={cpuData} />
       <Mem data={memData} />
       <Info data={infoData} />
