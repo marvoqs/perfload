@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import "./App.css";
-import socket from "./utilities/socketConnection";
+import socket from "../utilities/socketConnection";
+
+import Widget from "./Widget";
 
 function App() {
   const [performanceData, setPerformanceData] = useState({});
@@ -13,7 +14,11 @@ function App() {
 
   console.log({ performanceData });
 
-  return <>Hello</>;
+  return (
+    <>
+      <Widget />
+    </>
+  );
 }
 
 export default App;
