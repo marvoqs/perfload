@@ -15,6 +15,7 @@ function socketMain(io, socket) {
         break;
       case KEY_CLIENT_UI:
         socket.join("ui");
+        console.log("A react client has joined.");
         break;
       default:
         socket.disconnect(true);
@@ -31,9 +32,11 @@ function socketMain(io, socket) {
   });
 
   socket.on("perfData", (data) => {
-    // console.log({ data });
+    console.log("Tick...");
+    io.to("ui").emit("data", data);
   });
 }
+
 function checkAndAdd(data) {
   // Because we are doing db stuff, JS won't wait for the db
   // so we need to make this a promise
